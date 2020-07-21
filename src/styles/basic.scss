@@ -38,8 +38,22 @@ html {
         left: 0;
         z-index: 1001;
         overflow: hidden;
+        .el-menu {
+            border: none;
+            height: 100%;
+            width: 100% !important;
+        }
 
     }
+
+    .el-menu-item{
+        padding-left: 15px !important;
+    }
+
+    .el-submenu__title{
+        padding-left: 15px !important;
+    }
+
     .horizontal-collapse-transition {
         transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
     }
@@ -57,7 +71,48 @@ html {
             margin-left: 54px;
         }
 
+        .el-menu-item-group{
+            padding: 0 !important;
+            position: relative;
+        }
+        .el-submenu__icon-arrow{
+            display: none;
+        }
 
+        .el-submenu {
+            overflow: hidden;
+
+            &>.el-submenu__title {
+                //padding: 0 !important;
+
+                .el-submenu__icon-arrow {
+                    display: none;
+                }
+            }
+        }
+
+        .el-menu--collapse {
+            .el-submenu {
+                &>.el-submenu__title {
+                    &>span {
+                        height: 0;
+                        width: 0;
+                        overflow: hidden;
+                        visibility: hidden;
+                        display: inline-block;
+                    }
+                }
+            }
+            .el-menu-item{
+                &>span {
+                    height: 0;
+                    width: 0;
+                    overflow: hidden;
+                    visibility: hidden;
+                    display: inline-block;
+                }
+            }
+        }
     }
     .clearfix {
         &:after {

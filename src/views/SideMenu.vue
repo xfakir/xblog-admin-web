@@ -9,7 +9,7 @@
       text-color="#fff"
       active-text-color="#ffd04b"
     >
-      <el-submenu index="1">
+      <!--<el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
           <span>导航一</span>
@@ -27,30 +27,19 @@
           <el-menu-item index="1-4-1">选项1</el-menu-item>
         </el-submenu>
       </el-submenu>
-      <el-menu-item index="2">
+      <el-menu-item
+        v-for="(item, index) in sideMenu"
+        :key="index"
+        :index="item.index.toString()"
+      >
         <i class="el-icon-menu"></i>
-        <span slot="title">导航二</span>
-      </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <i class="el-icon-setting"></i>
-        <span slot="title">导航四</span>
-      </el-menu-item>
-      <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <span slot="title">导航二</span>
-      </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <i class="el-icon-setting"></i>
-        <span slot="title">导航四</span>
-      </el-menu-item>
+        <span slot="title">{{ item.title }}</span>
+      </el-menu-item>-->
+      <menu-item
+        v-for="(item, index) in sideMenu"
+        :key="index"
+        :item="item"
+      ></menu-item>
     </el-menu>
   </div>
 </template>
@@ -59,13 +48,35 @@
 import { mapGetters } from "vuex";
 export default {
   name: "SideMenu",
+  components: {
+    MenuItem: () => import("@/views/MenuItem")
+  },
+  data() {
+    return {
+      sideMenu: []
+    };
+  },
   computed: {
     ...mapGetters(["sidebar"]),
     isCollapse() {
       return !this.sidebar.opened;
     }
   },
+  mounted: function() {
+    this.getSideMenu();
+  },
   methods: {
+    getSideMenu() {
+      let that = this;
+      this.$axios
+        .get("/sidemenu")
+        .then(function(res) {
+          that.sideMenu = res.data.sideMenu;
+        })
+        .catch(function(err) {
+          console.log("err" + err);
+        });
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
@@ -76,5 +87,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

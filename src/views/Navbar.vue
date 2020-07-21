@@ -56,6 +56,7 @@ export default {
   width: 48px;
   height: 48px;
   line-height: 48px;
+  text-align: center;
   cursor: pointer;
   transition: background 0.3s;
   -webkit-tap-highlight-color: transparent;

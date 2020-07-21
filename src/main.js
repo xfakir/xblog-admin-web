@@ -8,8 +8,10 @@ import "@/styles/basic.scss";
 import "@/styles/variables.scss";
 import "@/styles/transition.scss";
 import "@/styles/mixin.scss";
+import "../mock/mock";
+import axios from "axios";
 //import "./plugins/element.js";
-
+Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 new Vue({

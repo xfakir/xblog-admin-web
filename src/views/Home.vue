@@ -5,7 +5,7 @@
       <div>
         <navbar />
       </div>
-      <el-main>Main</el-main>
+      <div class="main-router">Main</div>
       <el-footer>Footer</el-footer>
     </div>
   </div>
@@ -63,5 +63,9 @@ export default {
 }
 .hideSidebar {
   width: calc(100% - 54px);
+}
+.main-router {
+  height: 500px;
+  width: 100%;
 }
 </style>
