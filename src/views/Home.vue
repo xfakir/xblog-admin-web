@@ -1,11 +1,13 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <side-menu class="side-menu"></side-menu>
-    <div class="main-container">
+    <div class="app-container">
       <div>
         <navbar />
       </div>
-      <div class="main-router">Main</div>
+      <div class="main-router">
+        <router-view></router-view>
+      </div>
       <el-footer>Footer</el-footer>
     </div>
   </div>
@@ -47,7 +49,7 @@ export default {
   height: 100%;
   width: 100%;
 }
-.main-container {
+.app-container {
   background-color: #42b983;
 }
 

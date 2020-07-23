@@ -12,6 +12,7 @@
     "core-js": "^3.6.5",
     "element-ui": "^2.4.5",
     "node-sass": "^4.14.1",
+    "path-to-regexp": "^6.1.0",
     "sass-loader": "^9.0.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",

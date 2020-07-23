@@ -5,17 +5,20 @@ Mock.mock("/sidemenu", "get", () => {
     {
       index: 2,
       title: "first",
-      subMenu: [{ title: "first-1" }, { title: "first-2" }]
+      subMenu: [{ title: "first-1" }, { title: "first-2" }],
+      path: ""
     },
     {
       index: 3,
       title: "second",
-      subMenu: []
+      subMenu: [],
+      path: "test1"
     },
     {
       index: 4,
       title: "third",
-      subMenu: []
+      subMenu: [],
+      path: "test2"
     }
   ];
   return {

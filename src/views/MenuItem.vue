@@ -2,7 +2,7 @@
   <div>
     <el-submenu
       v-if="item.subMenu !== undefined && item.subMenu.length !== 0"
-      :index="item.index.toString()"
+      :index="item.path"
     >
       <template slot="title">
         <i class="el-icon-location"></i>
@@ -16,7 +16,7 @@
         {{ subitem.title }}
       </el-menu-item>
     </el-submenu>
-    <el-menu-item v-else :index="item.index.toString()">
+    <el-menu-item v-else :index="item.path">
       <i class="el-icon-location"></i>
       <span>{{ item.title }}</span>
     </el-menu-item>
