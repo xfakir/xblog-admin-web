@@ -1,6 +1,43 @@
 <template>
   <div>
-    <el-input
+    <el-table
+      :data="
+        showList.filter(
+          data =>
+            !search || data.name.toLowerCase().includes(search.toLowerCase())
+        )
+      "
+      style="width: 100%"
+    >
+      <el-table-column label="Date" prop="date"> </el-table-column>
+      <el-table-column label="Name" prop="name"> </el-table-column>
+      <el-table-column align="right">
+        <!--eslint-disable-next-line-->
+        <template slot="header" slot-scope="scope">
+          <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+        </template>
+        <template slot-scope="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            >Edit</el-button
+          >
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >Delete</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="handleChange"
+    />
+
+    <!--<el-input
       v-model="tableDataName"
       placeholder="请输入姓名"
       style="width:240px"
@@ -11,7 +48,7 @@
       <el-table-column prop="date" label="日期" width="180"> </el-table-column>
       <el-table-column prop="name" label="姓名" width="180"> </el-table-column>
       <el-table-column align="right">
-        <!--eslint-disable-next-line-->
+        &lt;!&ndash;eslint-disable-next-line&ndash;&gt;
         <template slot="header" slot-scope="scope">
           <el-input
             v-model="tableDataName"
@@ -31,74 +68,51 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="totalItems"
     >
-    </el-pagination>
+    </el-pagination>-->
   </div>
 </template>
 
 <script>
+import { fetchList } from "@/api/article";
+import Pagination from "@/components/Pagination/Pagination";
 export default {
+  components: {
+    Pagination
+  },
   data() {
     return {
-      tableDataBegin: [
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王二虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王二虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        },
-        {
-          date: "2016-05-05",
-          name: "王三虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-06",
-          name: "王三虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-07",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-08",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ],
+      search: "",
       tableDataName: "",
       tableDataEnd: [],
       currentPage: 4,
       pageSize: 2,
       totalItems: 0,
       filterTableDataEnd: [],
-      flag: false
+      flag: false,
+      list: [],
+      showList: [],
+      total: 0,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 4
+      }
     };
   },
   created() {
-    this.totalItems = this.tableDataBegin.length;
+    /*this.totalItems = this.tableDataBegin.length;
     if (this.totalItems > this.pageSize) {
       for (let index = 0; index < this.pageSize; index++) {
         this.tableDataEnd.push(this.tableDataBegin[index]);
       }
     } else {
       this.tableDataEnd = this.tableDataBegin;
-    }
+    }*/
+    this.getList();
+    this.initList();
+  },
+  mounted() {
+    this.initList();
   },
   methods: {
     //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
@@ -127,6 +141,12 @@ export default {
       this.flag = true;
     },
     openData() {},
+    handleChange(obj) {
+      console.log(obj);
+      this.limit = obj.limit;
+      this.page = obj.page;
+      this.currentChangePage(this.list);
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
@@ -147,14 +167,27 @@ export default {
     }, //组件自带监控当前页码
 
     currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
+      let from = (this.page - 1) * this.limit;
+      let to = this.page * this.limit;
+      this.showList = [];
       for (; from < to; from++) {
         if (list[from]) {
-          this.tableDataEnd.push(list[from]);
+          this.showList.push(list[from]);
         }
       }
+    },
+    initList() {
+      this.currentChangePage(this.list);
+      console.log(this.list);
+    },
+    getList() {
+      this.listLoading = true;
+      fetchList().then(response => {
+        this.list = response.data.items;
+        this.showList = response.data.items;
+        this.total = response.data.total;
+        this.listLoading = false;
+      });
     }
   }
 };

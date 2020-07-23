@@ -2,9 +2,15 @@ import axios from "axios";
 
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
+// create an axios instance
+const service = axios.create({
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // withCredentials: true, // send cookies when cross-domain requests
+  timeout: 5000 // request timeout
+});
 
 // 请求拦截器
-axios.interceptors.request.use(
+service.interceptors.request.use(
   function(config) {
     return config;
   },
@@ -13,7 +19,7 @@ axios.interceptors.request.use(
   }
 );
 // 响应拦截器
-axios.interceptors.response.use(
+service.interceptors.response.use(
   function(response) {
     return response;
   },
@@ -21,3 +27,4 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+export default service;
