@@ -1,25 +1,49 @@
 <template>
   <div>
-    <el-table
-      :data="
-        showList.filter(
-          data =>
-            !search || data.name.toLowerCase().includes(search.toLowerCase())
-        )
-      "
-      style="width: 100%"
-    >
+    <div class="filter-bar">
+      <el-date-picker
+        v-model="value3"
+        type="daterange"
+        range-separator="至"
+        size="mini"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        class="filter-date block"
+      >
+      </el-date-picker>
+      <el-select
+        v-model="value1"
+        size="mini"
+        multiple
+        placeholder="请选择"
+        class="filter-category"
+      >
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+      <el-input
+        v-model="search"
+        size="mini"
+        placeholder="输入关键字搜索"
+        class="filter-search"
+      />
+    </div>
+    <el-table :data="show" style="width: 100%" border="border">
       <el-table-column label="Date" prop="date"> </el-table-column>
       <el-table-column label="Name" prop="name"> </el-table-column>
-      <el-table-column align="right">
-        <!--eslint-disable-next-line-->
-        <template slot="header" slot-scope="scope">
-          <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
-        </template>
+
+      <el-table-column align="center" width="180px">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
             >Edit</el-button
           >
+        </template>
+        <template slot-scope="scope">
           <el-button
             size="mini"
             type="danger"
@@ -36,39 +60,6 @@
       :limit.sync="listQuery.limit"
       @pagination="handleChange"
     />
-
-    <!--<el-input
-      v-model="tableDataName"
-      placeholder="请输入姓名"
-      style="width:240px"
-    ></el-input>
-    <el-button type="primary" @click="doFilter">搜索</el-button>
-    <el-button type="primary" @click="openData">展示数据</el-button>
-    <el-table :data="tableDataEnd" border style="width: 100%">
-      <el-table-column prop="date" label="日期" width="180"> </el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-      <el-table-column align="right">
-        &lt;!&ndash;eslint-disable-next-line&ndash;&gt;
-        <template slot="header" slot-scope="scope">
-          <el-input
-            v-model="tableDataName"
-            size="mini"
-            placeholder="请输入姓名"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column prop="address" label="地址"> </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[1, 2, 3, 4]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="totalItems"
-    >
-    </el-pagination>-->
   </div>
 </template>
 
@@ -81,14 +72,63 @@ export default {
   },
   data() {
     return {
+      options: [
+        {
+          value: "选项1",
+          label: "黄金糕"
+        },
+        {
+          value: "选项2",
+          label: "双皮奶"
+        },
+        {
+          value: "选项3",
+          label: "蚵仔煎"
+        },
+        {
+          value: "选项4",
+          label: "龙须面"
+        },
+        {
+          value: "选项5",
+          label: "北京烤鸭"
+        }
+      ],
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
+      },
+      value1: [],
+      value2: [],
+      value3: "",
       search: "",
-      tableDataName: "",
-      tableDataEnd: [],
-      currentPage: 4,
-      pageSize: 2,
-      totalItems: 0,
-      filterTableDataEnd: [],
-      flag: false,
       list: [],
       showList: [],
       total: 0,
@@ -98,6 +138,15 @@ export default {
         limit: 4
       }
     };
+  },
+  computed: {
+    show() {
+      return this.showList.filter(
+        data =>
+          !this.search ||
+          data.name.toLowerCase().includes(this.search.toLowerCase())
+      );
+    }
   },
   created() {
     /*this.totalItems = this.tableDataBegin.length;
@@ -109,10 +158,6 @@ export default {
       this.tableDataEnd = this.tableDataBegin;
     }*/
     this.getList();
-    this.initList();
-  },
-  mounted() {
-    this.initList();
   },
   methods: {
     //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
@@ -142,7 +187,6 @@ export default {
     },
     openData() {},
     handleChange(obj) {
-      console.log(obj);
       this.limit = obj.limit;
       this.page = obj.page;
       this.currentChangePage(this.list);
@@ -167,8 +211,8 @@ export default {
     }, //组件自带监控当前页码
 
     currentChangePage(list) {
-      let from = (this.page - 1) * this.limit;
-      let to = this.page * this.limit;
+      let from = (this.listQuery.page - 1) * this.listQuery.limit;
+      let to = this.listQuery.page * this.listQuery.limit;
       this.showList = [];
       for (; from < to; from++) {
         if (list[from]) {
@@ -176,17 +220,11 @@ export default {
         }
       }
     },
-    initList() {
-      console.log("init");
-      console.log("init");
-      this.currentChangePage(this.list);
-      console.log(this.list);
-    },
     getList() {
       this.listLoading = true;
       fetchList().then(response => {
         this.list = response.data.items;
-        this.showList = response.data.items;
+        this.handleChange(this.list);
         this.total = response.data.total;
         this.listLoading = false;
       });
@@ -194,3 +232,25 @@ export default {
   }
 };
 </script>
+<style scoped>
+.filter-bar {
+  height: 50px;
+  margin-left: 10px;
+  margin-top: 15px;
+}
+.filter-date {
+  float: left;
+  width: 20%;
+  padding-left: 30px;
+}
+.filter-category {
+  float: left;
+  width: 20%;
+  padding-left: 30px;
+}
+.filter-search {
+  float: right;
+  width: 20%;
+  padding-right: 30px;
+}
+</style>
