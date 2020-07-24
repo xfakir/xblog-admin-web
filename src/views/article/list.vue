@@ -178,6 +178,7 @@ export default {
     },
     initList() {
       console.log("init");
+      console.log("init");
       this.currentChangePage(this.list);
       console.log(this.list);
     },
