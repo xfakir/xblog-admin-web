@@ -29,27 +29,27 @@ Mock.mock("/sidemenu", "get", () => {
 Mock.mock("/vue-element-admin/article/list", "get", () => {
   let items = [
     {
-      date: "2016-05-01",
+      date: "2020-07-21",
       name: "王小虎",
       address: "上海市普陀区金沙江路 1518 弄"
     },
     {
-      date: "2016-05-02",
+      date: "2020-07-21",
       name: "王小虎",
       address: "上海市普陀区金沙江路 1517 弄"
     },
     {
-      date: "2016-05-03",
+      date: "2020-07-21",
       name: "王二虎",
       address: "上海市普陀区金沙江路 1519 弄"
     },
     {
-      date: "2016-05-04",
+      date: "2020-07-21",
       name: "王二虎",
       address: "上海市普陀区金沙江路 1516 弄"
     },
     {
-      date: "2016-05-05",
+      date: "2020-07-21",
       name: "王三虎",
       address: "上海市普陀区金沙江路 1518 弄"
     },

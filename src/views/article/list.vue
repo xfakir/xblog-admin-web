@@ -2,17 +2,19 @@
   <div>
     <div class="filter-bar">
       <el-date-picker
-        v-model="value3"
+        v-model="dateRange"
         type="daterange"
         range-separator="至"
         size="mini"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         class="filter-date block"
+        :picker-options="pickerOptions"
+        @change="handleDateChange"
       >
       </el-date-picker>
       <el-select
-        v-model="value1"
+        v-model="categorySelect"
         size="mini"
         multiple
         placeholder="请选择"
@@ -31,9 +33,10 @@
         size="mini"
         placeholder="输入关键字搜索"
         class="filter-search"
+        @input="handleSearchChange"
       />
     </div>
-    <el-table :data="show" style="width: 100%" border="border">
+    <el-table :data="showList" style="width: 100%">
       <el-table-column label="Date" prop="date"> </el-table-column>
       <el-table-column label="Name" prop="name"> </el-table-column>
 
@@ -54,7 +57,6 @@
       </el-table-column>
     </el-table>
     <pagination
-      v-show="total > 0"
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
@@ -125,45 +127,116 @@ export default {
           }
         ]
       },
-      value1: [],
-      value2: [],
-      value3: "",
+      categorySelect: [],
+      dateRange: "",
       search: "",
       list: [],
+      filterList: [],
       showList: [],
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 4
+      },
+
+      conditions: {
+        ranges: [],
+        chooses: []
       }
     };
   },
-  computed: {
-    show() {
-      return this.showList.filter(
+  computed: {},
+  created() {
+    this.getList();
+  },
+  methods: {
+    handleSearchChange() {
+      console.log(this.search);
+      this.filterList = this.filterList.filter(
         data =>
           !this.search ||
           data.name.toLowerCase().includes(this.search.toLowerCase())
       );
-    }
-  },
-  created() {
-    /*this.totalItems = this.tableDataBegin.length;
-    if (this.totalItems > this.pageSize) {
-      for (let index = 0; index < this.pageSize; index++) {
-        this.tableDataEnd.push(this.tableDataBegin[index]);
+      this.total = this.filterList.length;
+      console.log(this.total);
+      this.currentChangePage(this.filterList);
+    },
+    addChooseCondition(name) {
+      this.conditions.chooses.push(name);
+      this.doFilter();
+    },
+    handleConditionChange(type, name) {
+      if (type === "range") {
+        this.addRangeCondition(name);
+      } else {
+        this.addChooseCondition(name);
       }
-    } else {
-      this.tableDataEnd = this.tableDataBegin;
-    }*/
-    this.getList();
-  },
-  methods: {
+    },
+    handleDateChange() {
+      let name = "date";
+      if (this.dateRange != null) {
+        let range = {
+          name: name,
+          low: this.dateRange[0],
+          high: this.dateRange[1]
+        };
+        this.addRangeCondition(range);
+      } else {
+        this.removeConditionByType(name);
+      }
+    },
+    addRangeCondition(range) {
+      let ranges = this.conditions.ranges;
+      let flag = false;
+      for (let i = 0; i < ranges.length; i++) {
+        if (ranges[i] && ranges[i].name === range.name) {
+          ranges[i] = range;
+          flag = true;
+        }
+      }
+      if (!flag) {
+        ranges.push(range);
+      }
+      this.doFilter();
+    },
+    isDuringDate(listDate, low, high) {
+      let date = new Date(listDate);
+      return date >= low && date <= high;
+    },
+    removeConditionByType(name) {
+      console.log("remove");
+      var ranges = this.conditions.ranges;
+      for (let i = 0; i < ranges.length; i++) {
+        if (ranges[i] && ranges[i].name === name) {
+          ranges.splice(i, 1);
+        }
+      }
+      this.doFilter();
+    },
     //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
     //用两个变量接收currentChangePage函数的参数
     doFilter() {
-      if (this.tableDataName == "") {
+      let conditions = this.conditions;
+      if (conditions.ranges.length !== 0) {
+        for (let range of conditions.ranges) {
+          this.filterList = this.list.filter(item => {
+            if (range.name === "date") {
+              return this.isDuringDate(item.date, range.low, range.high);
+            } else {
+              return (
+                item[range.name] >= range.low && item[range.name] <= range.high
+              );
+            }
+          });
+        }
+      }
+      //todo choose
+
+      this.total = this.filterList.length;
+      this.currentChangePage(this.filterList);
+
+      /*if (this.tableDataName == "") {
         this.$message.warning("查询条件不能为空！");
         return;
       }
@@ -183,13 +256,13 @@ export default {
       //渲染表格,根据值
       this.currentChangePage(this.filterTableDataEnd);
       //页面初始化数据需要判断是否检索过
-      this.flag = true;
+      this.flag = true;*/
     },
     openData() {},
     handleChange(obj) {
       this.limit = obj.limit;
       this.page = obj.page;
-      this.currentChangePage(this.list);
+      this.currentChangePage(this.filterList);
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -224,6 +297,7 @@ export default {
       this.listLoading = true;
       fetchList().then(response => {
         this.list = response.data.items;
+        this.filterList = this.list;
         this.handleChange(this.list);
         this.total = response.data.total;
         this.listLoading = false;
