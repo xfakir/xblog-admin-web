@@ -31,42 +31,42 @@ Mock.mock("/vue-element-admin/article/list", "get", () => {
     {
       date: "2020-07-21",
       name: "王小虎",
-      address: "上海市普陀区金沙江路 1518 弄"
+      category: "Java"
     },
     {
       date: "2020-07-21",
       name: "王小虎",
-      address: "上海市普陀区金沙江路 1517 弄"
+      category: "Java"
     },
     {
       date: "2020-07-21",
       name: "王二虎",
-      address: "上海市普陀区金沙江路 1519 弄"
+      category: "Liunx"
     },
     {
       date: "2020-07-21",
       name: "王二虎",
-      address: "上海市普陀区金沙江路 1516 弄"
+      category: "Java"
     },
     {
       date: "2020-07-21",
       name: "王三虎",
-      address: "上海市普陀区金沙江路 1518 弄"
+      category: "HTTP"
     },
     {
       date: "2016-05-06",
       name: "王三虎",
-      address: "上海市普陀区金沙江路 1517 弄"
+      category: "Mysql"
     },
     {
       date: "2016-05-07",
       name: "王小虎",
-      address: "上海市普陀区金沙江路 1519 弄"
+      category: "Redis"
     },
     {
       date: "2016-05-08",
       name: "王小虎",
-      address: "上海市普陀区金沙江路 1516 弄"
+      category: "Java"
     }
   ];
   return {

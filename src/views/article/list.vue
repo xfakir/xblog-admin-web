@@ -19,6 +19,7 @@
         multiple
         placeholder="请选择"
         class="filter-category"
+        @change="handleCategoryChange"
       >
         <el-option
           v-for="item in options"
@@ -39,14 +40,12 @@
     <el-table :data="showList" style="width: 100%">
       <el-table-column label="Date" prop="date"> </el-table-column>
       <el-table-column label="Name" prop="name"> </el-table-column>
-
+      <el-table-column label="Category" prop="category"> </el-table-column>
       <el-table-column align="center" width="180px">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
             >Edit</el-button
           >
-        </template>
-        <template slot-scope="scope">
           <el-button
             size="mini"
             type="danger"
@@ -76,24 +75,24 @@ export default {
     return {
       options: [
         {
-          value: "选项1",
-          label: "黄金糕"
+          value: "Java",
+          label: "Java"
         },
         {
-          value: "选项2",
-          label: "双皮奶"
+          value: "Redis",
+          label: "Redis"
         },
         {
-          value: "选项3",
-          label: "蚵仔煎"
+          value: "Mysql",
+          label: "Mysql"
         },
         {
-          value: "选项4",
-          label: "龙须面"
+          value: "MongoDB",
+          label: "MongoDB"
         },
         {
-          value: "选项5",
-          label: "北京烤鸭"
+          value: "RocketMQ",
+          label: "RocketMQ"
         }
       ],
       pickerOptions: {
@@ -152,25 +151,19 @@ export default {
   },
   methods: {
     handleSearchChange() {
-      console.log(this.search);
-      this.filterList = this.filterList.filter(
-        data =>
-          !this.search ||
-          data.name.toLowerCase().includes(this.search.toLowerCase())
-      );
-      this.total = this.filterList.length;
-      console.log(this.total);
-      this.currentChangePage(this.filterList);
-    },
-    addChooseCondition(name) {
-      this.conditions.chooses.push(name);
       this.doFilter();
     },
-    handleConditionChange(type, name) {
-      if (type === "range") {
-        this.addRangeCondition(name);
+    handleCategoryChange() {
+      let name = "category";
+      console.log(this.categorySelect);
+      if (this.categorySelect != null && this.categorySelect.length > 0) {
+        let choose = {
+          name: name,
+          chooses: this.categorySelect
+        };
+        this.addChooseCondition(choose);
       } else {
-        this.addChooseCondition(name);
+        this.removeChooseCondition(name);
       }
     },
     handleDateChange() {
@@ -185,6 +178,18 @@ export default {
       } else {
         this.removeConditionByType(name);
       }
+    },
+    addChooseCondition(choose) {
+      let chooses = this.conditions.chooses;
+      let flag = false;
+      for (let i = 0; i < chooses.length; i++) {
+        if (chooses[i] && chooses[i].name === choose.name) {
+          chooses[i] = choose;
+          flag = true;
+        }
+      }
+      if (!flag) chooses.push(choose);
+      this.doFilter();
     },
     addRangeCondition(range) {
       let ranges = this.conditions.ranges;
@@ -204,6 +209,15 @@ export default {
       let date = new Date(listDate);
       return date >= low && date <= high;
     },
+    removeChooseCondition(name) {
+      let chooses = this.conditions.chooses;
+      for (let i = 0; i < chooses.length; i++) {
+        if (chooses[i] && chooses[i].name === name) {
+          chooses.splice(i, 1);
+        }
+      }
+      this.doFilter();
+    },
     removeConditionByType(name) {
       console.log("remove");
       var ranges = this.conditions.ranges;
@@ -217,10 +231,20 @@ export default {
     //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
     //用两个变量接收currentChangePage函数的参数
     doFilter() {
+      this.filterList = this.list;
+
+      if (this.search) {
+        this.filterList = this.filterList.filter(
+          data =>
+            !this.search ||
+            data.name.toLowerCase().includes(this.search.toLowerCase())
+        );
+      }
+
       let conditions = this.conditions;
       if (conditions.ranges.length !== 0) {
         for (let range of conditions.ranges) {
-          this.filterList = this.list.filter(item => {
+          this.filterList = this.filterList.filter(item => {
             if (range.name === "date") {
               return this.isDuringDate(item.date, range.low, range.high);
             } else {
@@ -231,7 +255,21 @@ export default {
           });
         }
       }
-      //todo choose
+      let chooses = this.conditions.chooses;
+      let beforeChooseList = this.filterList;
+      let chooseList = [];
+      if (chooses.length !== 0) {
+        for (let choose of chooses) {
+          for (let i = 0; i < choose.chooses.length; i++) {
+            chooseList = chooseList.concat(
+              beforeChooseList.filter(item => {
+                return item[choose.name].indexOf(choose.chooses[i]) !== -1;
+              })
+            );
+          }
+        }
+        this.filterList = chooseList;
+      }
 
       this.total = this.filterList.length;
       this.currentChangePage(this.filterList);
