@@ -10,11 +10,14 @@ import "@/styles/variables.scss";
 import "@/styles/transition.scss";
 import "@/styles/mixin.scss";
 import "../mock/mock";
+import mavonEditor from "mavon-editor";
+import "mavon-editor/dist/css/index.css";
 import axios from "axios";
 //import "./plugins/element.js";
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
+Vue.use(mavonEditor);
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);

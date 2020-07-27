@@ -20,7 +20,7 @@ const routes = [
       },
       {
         path: "test2",
-        component: () => import("@/views/test2"),
+        component: () => import("@/views/article/new"),
         name: "test2",
         meta: {
           title: "test2"

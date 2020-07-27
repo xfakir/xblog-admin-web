@@ -272,6 +272,7 @@ export default {
       }
 
       this.total = this.filterList.length;
+      this.listQuery.page = 1;
       this.currentChangePage(this.filterList);
 
       /*if (this.tableDataName == "") {
