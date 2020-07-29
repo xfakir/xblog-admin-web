@@ -10,9 +10,6 @@
       <div class="breadcrumb-container">
         <bread-crumb></bread-crumb>
       </div>
-      <div class="right">
-        <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
-      </div>
     </div>
     <el-divider class="nav-divider"></el-divider>
     <div class="nav-second"></div>
@@ -78,8 +75,5 @@ export default {
 
 .breadcrumb-container {
   float: left;
-}
-.right {
-  float: right;
 }
 </style>

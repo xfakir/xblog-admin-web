@@ -5,8 +5,10 @@ Mock.mock("/sidemenu", "get", () => {
     {
       index: 2,
       title: "first",
-      subMenu: [{ title: "first-1" }, { title: "first-2" }],
-      path: ""
+      subMenu: [
+        { title: "first-1", path: "upload" },
+        { title: "first-2", path: "test" }
+      ]
     },
     {
       index: 3,

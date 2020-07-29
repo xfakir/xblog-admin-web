@@ -8,7 +8,7 @@
       <div class="main-router">
         <router-view></router-view>
       </div>
-      <el-footer>Footer</el-footer>
+      <div class="footer-container">Footer</div>
     </div>
   </div>
 </template>
@@ -50,9 +50,10 @@ export default {
   width: 100%;
 }
 .app-container {
-  background-color: #42b983;
 }
-
+.footer-container {
+  padding-top: 5px;
+}
 .el-header,
 .el-footer {
   background: #fff;
@@ -67,7 +68,6 @@ export default {
   width: calc(100% - 54px);
 }
 .main-router {
-  height: 500px;
   width: 100%;
 }
 </style>

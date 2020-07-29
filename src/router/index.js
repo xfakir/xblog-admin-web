@@ -20,10 +20,18 @@ const routes = [
       },
       {
         path: "test2",
-        component: () => import("@/views/article/new"),
+        component: () => import("@/views/article/OnlineEdit"),
         name: "test2",
         meta: {
           title: "test2"
+        }
+      },
+      {
+        path: "upload",
+        component: () => import("@/views/article/Upload"),
+        name: "upload",
+        meta: {
+          title: "upload"
         }
       }
     ],

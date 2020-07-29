@@ -11,7 +11,7 @@
       <el-menu-item
         v-for="(subitem, index) in item.subMenu"
         :key="index"
-        :index="item.index + '-' + index"
+        :index="subitem.path"
       >
         {{ subitem.title }}
       </el-menu-item>
