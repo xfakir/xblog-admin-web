@@ -8,7 +8,8 @@ Mock.mock("/sidemenu", "get", () => {
       subMenu: [
         { title: "first-1", path: "upload" },
         { title: "first-2", path: "test" }
-      ]
+      ],
+      path: "a"
     },
     {
       index: 3,

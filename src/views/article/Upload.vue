@@ -53,13 +53,10 @@
         class="upload-demo"
         action="https://jsonplaceholder.typicode.com/posts/"
         name="upload"
-        :on-preview="handlePreview"
         :on-remove="handleRemove"
-        :before-remove="beforeRemove"
         :on-success="handleSuccss"
         multiple
         :limit="3"
-        :on-exceed="handleExceed"
         :file-list="fileList"
       >
         <el-button size="small" type="primary">点击上传</el-button>
@@ -76,10 +73,12 @@
 </template>
 
 <script>
+  import findMdImgUrl from "@/utils/findMdImgUrl";
 export default {
   name: "Upload",
   data() {
     return {
+      fileList: [],
       value: "",
       article: "",
       form: {
@@ -96,18 +95,20 @@ export default {
   },
   methods: {
     handleSuccss(res, file) {
-      console.log("upload success");
-      console.log(file.raw);
       const reader = new FileReader();
       reader.readAsText(file.raw);
-      var md = require("markdown-it")({
+      /*var md = require("markdown-it")({
         html: false
-      });
+      });*/
       let that = this;
       reader.onload = function(e) {
-        console.log(e.target.result);
-        that.article = md.render("# a");
+        // that.article = md.render("# a");
+        findMdImgUrl(e.target.result);
+        that.article = e.target.result;
       };
+    },
+    handleRemove() {
+      this.article = "";
     },
     onSubmit() {
       console.log("submit!");
