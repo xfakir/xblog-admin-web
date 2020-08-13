@@ -9,7 +9,7 @@ import "@/styles/basic.scss";
 import "@/styles/variables.scss";
 import "@/styles/transition.scss";
 import "@/styles/mixin.scss";
-import "../mock/mock";
+// import "../mock/mock";
 import mavonEditor from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 import axios from "axios";

@@ -49,6 +49,10 @@
         </div>
       </el-upload>
       <el-divider>上传与编辑</el-divider>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit">立即创建</el-button>
+        <el-button>取消</el-button>
+      </el-form-item>
       <el-upload
         class="upload-demo"
         action="https://jsonplaceholder.typicode.com/posts/"
@@ -73,7 +77,6 @@
 </template>
 
 <script>
-  import findMdImgUrl from "@/utils/findMdImgUrl";
 export default {
   name: "Upload",
   data() {
@@ -97,13 +100,14 @@ export default {
     handleSuccss(res, file) {
       const reader = new FileReader();
       reader.readAsText(file.raw);
+      console.log("upload success");
       /*var md = require("markdown-it")({
         html: false
       });*/
       let that = this;
       reader.onload = function(e) {
-        // that.article = md.render("# a");
-        findMdImgUrl(e.target.result);
+        //that.article = md.render("# a");
+        console.log(e.target.result);
         that.article = e.target.result;
       };
     },
@@ -112,6 +116,19 @@ export default {
     },
     onSubmit() {
       console.log("submit!");
+      const article = {
+        title: "aaa",
+        author: "xxx",
+        tags: "sss",
+        category: "aaa",
+        summary: "aaa",
+        content: this.article
+      };
+      this.$axios
+        .post("http://localhost:8080/article/add", article)
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }
 };
